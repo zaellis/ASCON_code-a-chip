@@ -41,11 +41,12 @@ module ASCON_CONTROLER #(
     state_t state, next_state;
     logic [3:0] count, next_count;
     logic [3:0] last_len;
-    logic [63:0] pado;
+    logic [63:0] pado, pado2;
 
     assign Tag = {Xo3,Xo4} ^ key;
     assign CTblock = Xo0 ^ pado; 
     ASCONpadding asconpad1 (blockin,datalen,pado);
+    ASCONpadding asconpad2 (CTblock,datalen,pado2);
 
     always_ff @(posedge clk, negedge nRST) begin
         if(nRST == 0) begin
@@ -100,13 +101,15 @@ module ASCON_CONTROLER #(
                     Xi3 = Xo3 ^ key[127:64];
                     case(mode)
                         2'd0: begin
-                            Xi0 = blockin;
                             Xi4 = Xo4 ^ key[63:0]^1;
+                            CTv = (datalen == '0) ? 1'b0 : 1'b1;
                             if(datalen == 4'd8) begin
+                                Xi0 = blockin;
                                 next_state = CT;
                                 rcinit = 4'b0110;
                             end
                             else begin
+                                Xi0 = pado2 ^ Xo0;;
                                 next_state = finalize;
                                 Xi1 = Xo1 ^ key[127:64];
                                 Xi2 = Xo2 ^ key[63:0];
@@ -172,14 +175,15 @@ module ASCON_CONTROLER #(
                     end
                     else begin
                         CTv = (datalen == '0) ? 1'b0 : 1'b1;
-                        Xi0 = blockin;
                         Xi4 = Xo4 ^ 1;
                         if(datalen == 4'd8) begin
+                            Xi0 = blockin;
                             rcinit = 4'b0110;
                             next_state = CT;
                         end
                         else begin
                             rcinit = 4'b0000;
+                            Xi0 = pado2 ^ Xo0;;
                             Xi1 = Xo1 ^ key[127:64];
                             Xi2 = Xo2 ^ key[63:0];
                             next_state = finalize;
@@ -220,12 +224,14 @@ module ASCON_CONTROLER #(
                 if(count == B) begin
                     next_count = 1;
                     rcmode = 2'd2;
-                    Xi0 = blockin;
+                    CTv = (datalen == '0) ? 1'b0 : 1'b1;
                     if(datalen == 4'd8) begin
+                        Xi0 = blockin;
                         rcinit = 4'b0110;
                     end
                     else begin
                         rcinit = 4'b0000;
+                        Xi0 = pado2 ^ Xo0;
                         Xi1 = Xo1 ^ key[127:64];
                         Xi2 = Xo2 ^ key[63:0];
                         next_state = finalize;
