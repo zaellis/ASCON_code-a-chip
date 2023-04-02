@@ -10,7 +10,9 @@ module ASCON_AEAD(
     output logic [127:0] Tag,
     output logic [63:0] CTblock,
     output logic CTv,
-    output logic Tv
+    output logic Tv,
+    output logic AD_read,
+    output logic [2:0] state
 );
 
     logic [1:0] rcmode;
@@ -35,6 +37,8 @@ module ASCON_AEAD(
         .CTblock(CTblock),
         .CTv(CTv),
         .Tv(Tv),
+        .AD_read(AD_read),
+        .state_out(state),
         .rcmode(rcmode),
         .rcinit(rcinit),
         .Xi0(Xi0),

@@ -20,6 +20,8 @@ module ASCON_CONTROLER #(
     output logic [63:0] CTblock,
     output logic CTv,
     output logic Tv,
+    output logic AD_read,
+    output logic [2:0] state_out,
     output logic [1:0] rcmode,
     output logic [3:0] rcinit,
     output logic [63:0] Xi0,
@@ -42,6 +44,8 @@ module ASCON_CONTROLER #(
     logic [3:0] count, next_count;
     logic [3:0] last_len;
     logic [63:0] pado, pado2;
+
+    assign state_out = state;
 
     assign Tag = {Xo3,Xo4} ^ key;
     assign CTblock = Xo0 ^ pado; 
@@ -67,6 +71,7 @@ module ASCON_CONTROLER #(
 
         CTv = '0;
         Tv = '0;
+        AD_read = 1'b0;
         rcmode = '0;
         rcinit = '0;
         Xi0 = '0;
@@ -130,12 +135,14 @@ module ASCON_CONTROLER #(
                             end
                         end
                         2'd2: begin
+                            AD_read = 1'b1;
                             next_state = AD;
                             rcinit = 4'b0110;
                             Xi0 = CTblock; //ADblock ^ Xo0;
                             Xi4 = Xo4 ^ key[63:0];
                         end
                         2'd3: begin
+                            AD_read = 1'b1;
                             next_state = AD;
                             rcinit = 4'b0110;
                             Xi0 = CTblock; //ADblock ^ Xo0;
@@ -154,6 +161,7 @@ module ASCON_CONTROLER #(
                 if(count == B) begin
                     next_count = 1;
                     rcmode = 2'd2;
+                    AD_read = 1'b1;
                     if(last_len == 4'd8) begin //this needs to change to last_len (registered)
                         rcinit = 4'b0110;
                         Xi0 = CTblock;

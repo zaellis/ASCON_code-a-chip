@@ -61,7 +61,7 @@ module mem_ctrl(
 
         case(state)
             idle: begin
-                we = ~wb_we;
+                we = wb_we;
                 mem_addr = wb_addr;
                 mem_datain = datain_wb[31:0];
                 next_count = 0;
