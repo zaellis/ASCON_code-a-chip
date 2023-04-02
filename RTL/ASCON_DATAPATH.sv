@@ -21,8 +21,13 @@ module ASCON_DATAPATH #(
     logic [3:0] constt;
     logic [63:0] Xreg0,Xreg1,Xreg2,Xreg3,Xreg4;
 
-    logic [UNROLL:0] [63:0] Xm0,Xm1,Xm2,Xm3,Xm4;
-    logic [UNROLL - 1:0] [3:0] constt_int;
+    logic [63:0] Xm0 [UNROLL:0];
+    logic [63:0] Xm1 [UNROLL:0];
+    logic [63:0] Xm2 [UNROLL:0];
+    logic [63:0] Xm3 [UNROLL:0];
+    logic [63:0] Xm4 [UNROLL:0];
+
+    logic [3:0] constt_int [UNROLL - 1:0];
 
     ASCON_ROUND_CONSTANT asconRC1(
         .clk(clk),.nRST(nRST),.rcmode(rcmode),
