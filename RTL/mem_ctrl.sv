@@ -57,7 +57,7 @@ module mem_ctrl(
         mem_datain = '0;
         mem_addr = '0;
 
-        blocksize = (addr_cntr[4:1] >= datalen[6:3]) ? datalen[2:0] : 4'd8;
+        blocksize = 4'd1;
 
         case(state)
             idle: begin
@@ -82,6 +82,7 @@ module mem_ctrl(
                 mem_addr = addr_cntr;
                 next_write_regs = datain_ascon[63:32];
                 if(CTv) begin
+                    blocksize = (({1'b0, addr_cntr[4:1]} + 5'd1) == {2'b00, datalen[6:4]}) ? datalen[2:0] : 4'd8;
                     we = 1'b0;
                     mem_addr = addr_cntr - 1;
                     mem_datain = datain_ascon[31:0];

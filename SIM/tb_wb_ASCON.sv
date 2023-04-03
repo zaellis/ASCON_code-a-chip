@@ -126,7 +126,16 @@ module tb_wb_ASCON();
         wb_transaction(32'h00000030, 32'h0C0D0E0F, 4'b1111, 1'b1, "AD_reg_2");
         wb_transaction(32'h00000034, 32'h08090A0B, 4'b1111, 1'b1, "AD_reg_3");
 
-        wb_transaction(32'h00000004, {16'd0, 16'b0111110000000000}, 4'b1111, 1'b1, "CNTRL_reg");
+        wb_transaction(32'h00000048, 32'h04050607, 4'b1111, 1'b1, "RAM_addr_0");
+        wb_transaction(32'h0000004C, 32'h00010203, 4'b1111, 1'b1, "RAM_addr_1");
+        wb_transaction(32'h00000050, 32'h0C0D0E0F, 4'b1111, 1'b1, "RAM_addr_2");
+        wb_transaction(32'h00000054, 32'h08090A0B, 4'b1111, 1'b1, "RAM_addr_3");
+        wb_transaction(32'h00000058, 32'h14000000, 4'b1111, 1'b1, "RAM_addr_4");
+        wb_transaction(32'h0000005C, 32'h10111213, 4'b1111, 1'b1, "RAM_addr_5");
+        wb_transaction(32'h00000060, 32'h1C000000, 4'b1111, 1'b1, "RAM_addr_6");
+        wb_transaction(32'h00000064, 32'h18191A1B, 4'b1111, 1'b1, "RAM_addr_7");
+
+        wb_transaction(32'h00000004, {16'd0, 16'b0111110000110101}, 4'b1111, 1'b1, "CNTRL_reg");
 
     end
 endmodule

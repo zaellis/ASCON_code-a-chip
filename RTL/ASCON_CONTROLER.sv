@@ -123,7 +123,7 @@ module ASCON_CONTROLER #(
                         2'd1: begin
                             Xi0 = CTblock;
                             Xi4 = Xo4 ^ key[63:0]^1;
-                            CTv = (datalen == '0) ? 1'b0 : 1'b1;
+                            CTv = 1'b1;
                             if(datalen == 4'd8) begin
                                 next_state = PT;
                                 rcinit = 4'b0110;
@@ -167,7 +167,7 @@ module ASCON_CONTROLER #(
                         Xi0 = CTblock;
                     end
                     else if(mode[0] == 1) begin
-                        CTv = (datalen == '0) ? 1'b0 : 1'b1;
+                        CTv = 1'b1;
                         Xi0 = CTblock;
                         Xi4 = Xo4 ^ 1;
                         if(datalen == 4'd8) begin
