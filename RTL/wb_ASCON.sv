@@ -28,6 +28,10 @@ module wb_ASCON(
 
     logic [4:0] wb_addr;
 
+    logic busy;
+    logic mem_we;
+    logic AD_read;
+
     logic AD_cntrl;
     logic [3:0] datalen_AD, blocksize, datalen;
     logic [63:0] dataout_mem, blockout, blockin;
