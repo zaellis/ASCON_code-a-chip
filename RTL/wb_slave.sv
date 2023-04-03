@@ -140,7 +140,7 @@ module wb_slave(
         mem_we = 1'b1;
 
         if(wb_cyc_i & wb_stb_i) begin
-            if(wb_adr_i[6:2] < 18) begin
+            if(wb_adr_i[7:2] < 18) begin
                 next_ack = 1'b1;
                 if(wb_we_i)
                     next_regs[wb_adr_i[6:2]] = wb_dat_i & mask;
@@ -148,6 +148,7 @@ module wb_slave(
                     raw_dat_o = regs[wb_adr_i[6:2]] & mask;
             end
             else begin
+                next_ack = ~busy;
                 mem_we = ~wb_we_i;
                 wb_addr_intermediate = wb_adr_i[7:2] - 6'd18;              
             end
