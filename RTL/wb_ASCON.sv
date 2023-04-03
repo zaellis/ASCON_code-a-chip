@@ -22,7 +22,7 @@ module wb_ASCON(
     logic [127:0] key;
     logic [127:0] nonce;
     logic [6:0] datalen_packet;
-    logic [3:0] AD_len;
+    logic [4:0] AD_len;
 
     logic [31:0] datain_wb;
 

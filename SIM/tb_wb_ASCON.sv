@@ -121,10 +121,12 @@ module tb_wb_ASCON();
         wb_transaction(32'h00000020, 32'h04050607, 4'b1111, 1'b1, "Nonce_reg_2");
         wb_transaction(32'h00000024, 32'h00010203, 4'b1111, 1'b1, "Nonce_reg_3");
 
-        wb_transaction(32'h00000028, 32'h04000000, 4'b1111, 1'b1, "AD_reg_0");
+        wb_transaction(32'h00000028, 32'h04050607, 4'b1111, 1'b1, "AD_reg_0");
         wb_transaction(32'h0000002C, 32'h00010203, 4'b1111, 1'b1, "AD_reg_1");
+        wb_transaction(32'h00000030, 32'h0C0D0E0F, 4'b1111, 1'b1, "AD_reg_2");
+        wb_transaction(32'h00000034, 32'h08090A0B, 4'b1111, 1'b1, "AD_reg_3");
 
-        wb_transaction(32'h00000004, {16'd0, 16'b0011101010000000}, 4'b1111, 1'b1, "CNTRL_reg");
+        wb_transaction(32'h00000004, {16'd0, 16'b0111110000000000}, 4'b1111, 1'b1, "CNTRL_reg");
 
     end
 endmodule

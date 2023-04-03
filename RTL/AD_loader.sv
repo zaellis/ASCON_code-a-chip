@@ -3,7 +3,7 @@ module AD_loader(
     input logic nRST,
     input logic busy,
     input logic AD_read,
-    input logic [3:0] AD_len,
+    input logic [4:0] AD_len,
     output logic block_request,
     output logic AD_cntrl,
     output logic [3:0] datalen
@@ -13,6 +13,7 @@ module AD_loader(
         idle,
         block_0,
         block_1,
+        block_2,
         stall
     } state_t;
 
@@ -31,6 +32,7 @@ module AD_loader(
 
         AD_cntrl = 1'b1;
         block_request = 1'b0;
+        datalen = '0;
 
         if(busy)
             next_state = state;
@@ -39,30 +41,42 @@ module AD_loader(
         
         case(state)
             idle: begin
-                if(busy)
+                if(busy && (AD_len != 0))
                     next_state = block_0;
             end
             block_0: begin
-                if(AD_len[3] == 1'b1)
+                if(AD_len[4] == 1'b1)
                     datalen = 4'd8;
                 else
                     datalen = AD_len[3:0];
                 if(AD_read) begin
                     next_state = block_1;
-                    AD_cntrl = AD_len[3];
                 end
             end
             block_1: begin
-                AD_cntrl = AD_len[3];
-                block_request = 1'b1;
-                if(AD_len[2:0] == '0)
-                    datalen = 4'd8;
-                else
-                    datalen = {1'b0, AD_len[2:0]}; 
-                if(AD_read)
-                    datalen = '0;
-                if(~AD_len[3] || AD_read)
+                AD_cntrl = AD_len[4] | AD_len[3];
+                block_request = 1'b1; 
+                datalen = 4'd8;
+                if(AD_read) begin
+                    if(AD_len[4] & AD_len[3]) begin
+                        next_state = block_2;
+                        datalen = AD_len[3:0];
+                    end
+                    else begin
+                        next_state = stall;
+                        datalen = {1'b0, AD_len[2:0]};
+                    end
+                end
+                if(~AD_cntrl)
                     next_state = stall;
+            end
+            block_2: begin
+                AD_cntrl = 1'b1;
+                datalen = 4'd8;
+                if(AD_read) begin
+                    datalen = '0;
+                    next_state = stall;
+                end
             end
             stall: begin
                 AD_cntrl = 1'b0;

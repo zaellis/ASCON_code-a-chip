@@ -24,7 +24,7 @@ module wb_slave(
     output logic [127:0] nonce,
     output logic [63:0] blockout,
     output logic [6:0] datalen,
-    output logic [3:0] AD_len,
+    output logic [4:0] AD_len,
     output logic [31:0] datain_wb,
     output logic [4:0] wb_addr,
     output logic mem_we
@@ -45,9 +45,9 @@ module wb_slave(
     assign mask[7:0] = {8{wb_sel_i[0]}};
 
     assign busy = regs[0][3];
-    assign start = regs[1][13];
-    assign mode = regs[1][12:11];
-    assign AD_len = regs[1][10:7];
+    assign start = regs[1][14];
+    assign mode = regs[1][13:12];
+    assign AD_len = regs[1][11:7];
     assign datalen = regs[1][6:0];
     assign key[31:0] = regs[2];
     assign key[63:32] = regs[3];
@@ -108,7 +108,7 @@ module wb_slave(
         next_regs[0][3] = (state == '0) ? 1'b0 : 1'b1;
 
         if(start)
-            next_regs[1][13] = 1'b0; //make sure start is only active for 1 clock cycle
+            next_regs[1][14] = 1'b0; //make sure start is only active for 1 clock cycle
 
         if(block_request)
             blockout = {regs[13], regs[12]};
@@ -125,6 +125,6 @@ module wb_slave(
         //This should stay at the bottom. cipher block back from core overides a write from the user
 
         next_regs[0][31:4] = '0; //hopefully this means FF won't be synthesized for these bits
-        next_regs[1][31:14] = '0;
+        next_regs[1][31:15] = '0;
     end
 endmodule
