@@ -30,7 +30,8 @@ module wb_slave(
     output logic mem_we
 );
 
-    logic [17:0] [31:0] regs, next_regs;
+    logic [31:0] regs [17:0];
+    logic [31:0] next_regs [17:0];
     logic CTBlock_location;
 
     logic [31:0] raw_dat_o;
