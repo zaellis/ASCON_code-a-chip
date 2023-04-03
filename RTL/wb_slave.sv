@@ -49,7 +49,7 @@ module wb_slave(
     assign start = regs[1][15];
     assign mode = regs[1][14:13];
     assign AD_len = regs[1][12:8];
-    assign datalen = regs[1][6:0];
+    assign datalen = regs[1][7:0];
     assign key[31:0] = regs[2];
     assign key[63:32] = regs[3];
     assign key[95:64] = regs[4];
