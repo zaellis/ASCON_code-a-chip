@@ -4,7 +4,7 @@ module mem_ctrl(
     input logic busy,
     input logic CTv,
     input logic wb_we,
-    input logic [6:0] datalen,
+    input logic [7:0] datalen,
     input logic [4:0] wb_addr,
     input logic [63:0] datain_ascon,
     input logic [31:0] datain_wb,
@@ -21,7 +21,8 @@ module mem_ctrl(
         read_0,
         read_1,
         write_0,
-        write_1
+        write_1,
+        stall
     } state_t;
 
     state_t state, next_state;
@@ -29,8 +30,10 @@ module mem_ctrl(
     logic [31:0] read_regs, next_read_regs;
     logic [31:0] write_regs, next_write_regs;
     logic [4:0] addr_cntr, next_count;
+    logic last_addr;
 
     assign dataout = {mem_dataout, read_regs};
+    assign last_addr = (({1'b0, addr_cntr[4:1]} + 5'd1) == {1'b0, datalen[7:4]}) ? 1'b1 : 1'b0;
 
     always_ff @(posedge clk, negedge nRST) begin
         if(nRST == 1'b0) begin
@@ -48,7 +51,10 @@ module mem_ctrl(
     end
 
     always_comb begin
-        next_state = state;
+        if(busy)
+            next_state = state;
+        else
+            next_state = idle;
         next_read_regs = read_regs;
         next_write_regs = write_regs;
         next_count = addr_cntr;
@@ -82,7 +88,7 @@ module mem_ctrl(
                 mem_addr = addr_cntr;
                 next_write_regs = datain_ascon[63:32];
                 if(CTv) begin
-                    blocksize = (({1'b0, addr_cntr[4:1]} + 5'd1) == {2'b00, datalen[6:4]}) ? datalen[2:0] : 4'd8;
+                    blocksize = (last_addr == 1'b1) ? datalen[3:0] : 4'd8;
                     we = 1'b0;
                     mem_addr = addr_cntr - 1;
                     mem_datain = datain_ascon[31:0];
@@ -94,12 +100,15 @@ module mem_ctrl(
                 mem_addr = addr_cntr;
                 mem_datain = write_regs;
                 next_count = addr_cntr + 1;
-                next_state = read_0;
+                if(last_addr)
+                    next_state = stall;
+                else
+                    next_state = read_0;
+            end
+            stall: begin
+                blocksize = '0;
             end
         endcase
-
-        if(busy == 1'b0)
-            next_state = idle;
     end
 
 endmodule

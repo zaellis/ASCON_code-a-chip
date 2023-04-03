@@ -135,7 +135,7 @@ module tb_wb_ASCON();
         wb_transaction(32'h00000060, 32'h1C000000, 4'b1111, 1'b1, "RAM_addr_6");
         wb_transaction(32'h00000064, 32'h18191A1B, 4'b1111, 1'b1, "RAM_addr_7");
 
-        wb_transaction(32'h00000004, {16'd0, 16'b0111110000110101}, 4'b1111, 1'b1, "CNTRL_reg");
+        wb_transaction(32'h00000004, {16'd0, 16'b1111100000101000}, 4'b1111, 1'b1, "CNTRL_reg");
 
     end
 endmodule

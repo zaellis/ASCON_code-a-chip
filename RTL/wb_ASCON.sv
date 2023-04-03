@@ -21,7 +21,7 @@ module wb_ASCON(
     logic [1:0] mode;
     logic [127:0] key;
     logic [127:0] nonce;
-    logic [6:0] datalen_packet;
+    logic [7:0] datalen_packet;
     logic [4:0] AD_len;
 
     logic [31:0] datain_wb;
@@ -112,6 +112,7 @@ module wb_ASCON(
         .clk(clk),
         .nRST(nRST),
         .busy(busy),
+        .AD_en(mode[1]),
         .AD_read(AD_read),
         .AD_len(AD_len),
         .block_request(block_request),

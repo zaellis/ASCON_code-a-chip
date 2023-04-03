@@ -2,6 +2,7 @@ module AD_loader(
     input logic clk,
     input logic nRST,
     input logic busy,
+    input logic AD_en,
     input logic AD_read,
     input logic [4:0] AD_len,
     output logic block_request,
@@ -41,7 +42,7 @@ module AD_loader(
         
         case(state)
             idle: begin
-                if(busy && (AD_len != 0))
+                if(busy && AD_en)
                     next_state = block_0;
             end
             block_0: begin

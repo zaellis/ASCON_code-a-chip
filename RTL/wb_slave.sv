@@ -23,7 +23,7 @@ module wb_slave(
     output logic [127:0] key,
     output logic [127:0] nonce,
     output logic [63:0] blockout,
-    output logic [6:0] datalen,
+    output logic [7:0] datalen,
     output logic [4:0] AD_len,
     output logic [31:0] datain_wb,
     output logic [4:0] wb_addr,
@@ -46,9 +46,9 @@ module wb_slave(
     assign mask[7:0] = {8{wb_sel_i[0]}};
 
     assign busy = regs[0][3];
-    assign start = regs[1][14];
-    assign mode = regs[1][13:12];
-    assign AD_len = regs[1][11:7];
+    assign start = regs[1][15];
+    assign mode = regs[1][14:13];
+    assign AD_len = regs[1][12:8];
     assign datalen = regs[1][6:0];
     assign key[31:0] = regs[2];
     assign key[63:32] = regs[3];
@@ -64,13 +64,47 @@ module wb_slave(
 
     always_ff @(posedge wb_clk_i, posedge wb_rst_i) begin
         if(wb_rst_i == 1'b1) begin
-            regs <= '0;
+            regs[0] <= '0;
+            regs[1] <= '0;
+            regs[2] <= '0;
+            regs[3] <= '0;
+            regs[4] <= '0;
+            regs[5] <= '0;
+            regs[6] <= '0;
+            regs[7] <= '0;
+            regs[8] <= '0;
+            regs[9] <= '0;
+            regs[10] <= '0;
+            regs[11] <= '0;
+            regs[12] <= '0;
+            regs[13] <= '0;
+            regs[14] <= '0;
+            regs[15] <= '0;
+            regs[16] <= '0;
+            regs[17] <= '0;
             CTBlock_location <= '0;
             wb_ack_o <= '0;
             wb_dat_o <= '0;
         end
         else begin
-            regs <= next_regs;
+            regs[0] <= next_regs[0];
+            regs[1] <= next_regs[1];
+            regs[2] <= next_regs[2];
+            regs[3] <= next_regs[3];
+            regs[4] <= next_regs[4];
+            regs[5] <= next_regs[5];
+            regs[6] <= next_regs[6];
+            regs[7] <= next_regs[7];
+            regs[8] <= next_regs[8];
+            regs[9] <= next_regs[9];
+            regs[10] <= next_regs[10];
+            regs[11] <= next_regs[11];
+            regs[12] <= next_regs[12];
+            regs[13] <= next_regs[13];
+            regs[14] <= next_regs[14];
+            regs[15] <= next_regs[15];
+            regs[16] <= next_regs[16];
+            regs[17] <= next_regs[17];
             if(start)
                 CTBlock_location <= 1'b0;
             if(CTv)
@@ -81,7 +115,24 @@ module wb_slave(
     end
 
     always_comb begin
-        next_regs = regs;
+        next_regs[0] = regs[0];
+        next_regs[1] = regs[1];
+        next_regs[2] = regs[2];
+        next_regs[3] = regs[3];
+        next_regs[4] = regs[4];
+        next_regs[5] = regs[5];
+        next_regs[6] = regs[6];
+        next_regs[7] = regs[7];
+        next_regs[8] = regs[8];
+        next_regs[9] = regs[9];
+        next_regs[10] = regs[10];
+        next_regs[11] = regs[11];
+        next_regs[12] = regs[12];
+        next_regs[13] = regs[13];
+        next_regs[14] = regs[14];
+        next_regs[15] = regs[15];
+        next_regs[16] = regs[16];
+        next_regs[17] = regs[17];
         blockout = '0;
         raw_dat_o = '0;
         next_ack = '0;
@@ -109,7 +160,7 @@ module wb_slave(
         next_regs[0][3] = (state == '0) ? 1'b0 : 1'b1;
 
         if(start)
-            next_regs[1][14] = 1'b0; //make sure start is only active for 1 clock cycle
+            next_regs[1][15] = 1'b0; //make sure start is only active for 1 clock cycle
 
         if(block_request)
             blockout = {regs[13], regs[12]};
@@ -126,6 +177,6 @@ module wb_slave(
         //This should stay at the bottom. cipher block back from core overides a write from the user
 
         next_regs[0][31:4] = '0; //hopefully this means FF won't be synthesized for these bits
-        next_regs[1][31:15] = '0;
+        next_regs[1][31:16] = '0;
     end
 endmodule

@@ -4,7 +4,7 @@ module mem_block(
     input logic busy,
     input logic CTv,
     input logic wb_we,
-    input logic [6:0] datalen,
+    input logic [7:0] datalen,
     input logic [4:0] wb_addr,
     input logic [63:0] datain_ascon,
     input logic [31:0] datain_wb,
